@@ -42,8 +42,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.common.logger.Log;
-
 /**
  * This fragment controls Bluetooth to communicate with other devices.
  */
@@ -62,7 +60,7 @@ public class BluetoothChatFragment extends Fragment {
     private Button mSendButton;
 
     /**
-     * Name of the connected device
+     * 接続されたデバイスの名前
      */
     private String mConnectedDeviceName = null;
 
@@ -72,7 +70,7 @@ public class BluetoothChatFragment extends Fragment {
     private ArrayAdapter<String> mConversationArrayAdapter;
 
     /**
-     * String buffer for outgoing messages
+     * 送信メッセージの為のString buffer
      */
     private StringBuffer mOutStringBuffer;
 
@@ -157,7 +155,7 @@ public class BluetoothChatFragment extends Fragment {
      * Set up the UI and background operations for chat.
      */
     private void setupChat() {
-        Log.d(TAG, "setupChat()");
+//        Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
@@ -175,7 +173,9 @@ public class BluetoothChatFragment extends Fragment {
                 if (null != view) {
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
                     String message = textView.getText().toString();
-                    sendMessage(message);
+                    String testMessage = "aiueo";
+
+                    sendMessage(testMessage);
                 }
             }
         });
@@ -346,7 +346,7 @@ public class BluetoothChatFragment extends Fragment {
                     setupChat();
                 } else {
                     // User did not enable Bluetooth or an error occurred
-                    Log.d(TAG, "BT not enabled");
+//                    Log.d(TAG, "BT not enabled");
                     Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
