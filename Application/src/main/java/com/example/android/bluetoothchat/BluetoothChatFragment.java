@@ -65,7 +65,7 @@ public class BluetoothChatFragment extends Fragment {
     private String mConnectedDeviceName = null;
 
     /**
-     * Array adapter for the conversation thread
+     * 会話スレッドのArrayadapter
      */
     private ArrayAdapter<String> mConversationArrayAdapter;
 
@@ -87,14 +87,17 @@ public class BluetoothChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //flagmentでアクションバーを使う場合にtrueにする
         setHasOptionsMenu(true);
-        // Get local Bluetooth adapter
+        // Get local Bluetooth adapter bluetooth用アダプタを取得して準備する?
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // If the adapter is null, then Bluetooth is not supported
+        // bluetooth用アダプタが準備されているか
         if (mBluetoothAdapter == null) {
+            //Toastはアクティビティ下でしか使えないのでactivityを取得する
             FragmentActivity activity = getActivity();
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            //activityの解放処理?
             activity.finish();
         }
     }
@@ -103,17 +106,17 @@ public class BluetoothChatFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // If BT is not on, request that it be enabled.
-        // setupChat() will then be called during onActivityResult
+        // BTがオンになっていない場合、有効にするリクエストを送り、onActivityResult時にsetupChat()が呼び出される
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
+            // BTがオンの場合にチャットのセットアップを開始する.
         } else if (mChatService == null) {
             setupChat();
         }
     }
 
+    //画面破棄時にチャットサーバを停止しておく
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -129,15 +132,22 @@ public class BluetoothChatFragment extends Fragment {
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        // onResume()での処理は BTがonsStart()で未接続時だった時にカバーするもの
+        // それを可能にする為に一時停止する.
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
+            //状態はSTATE_NONEである場合にのみチャット開始、我々はすでに開始されていないことを知っていますか
             if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
-                // Start the Bluetooth chat services
+                // bluetoothチャットを開始する
                 mChatService.start();
             }
         }
     }
 
+    /***
+     * FragmentのView階層を生成し戻り値として返す
+     * Fragment内で表示させたいViewを作成してる?
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -153,17 +163,15 @@ public class BluetoothChatFragment extends Fragment {
 
     /**
      * Set up the UI and background operations for chat.
+     * *チャットのためのUIとバックグラウンド動作を設定する?
      */
     private void setupChat() {
-//        Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
+        //会話スレッド用のアダプタを初期化します
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
 
         mConversationView.setAdapter(mConversationArrayAdapter);
-
-        // Initialize the compose field with a listener for the return key
-        mOutEditText.setOnEditorActionListener(mWriteListener);
 
         // Initialize the send button with a listener that for click events
         mSendButton.setOnClickListener(new View.OnClickListener() {
@@ -181,16 +189,21 @@ public class BluetoothChatFragment extends Fragment {
         });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
+        //ブルートゥース接続を行うためにBluetoothChatServiceを初期化します
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
+        // 送信メッセージのバッファを初期化します
         mOutStringBuffer = new StringBuffer("");
     }
 
     /**
      * Makes this device discoverable.
+     * アクションバーのMake discoverableボタンを押した時の処理
+     * 他デバイスのサーチング処理
      */
     private void ensureDiscoverable() {
+        //BTスキャンモードになっていなければ300秒間の自動サーチングをするか確認する.
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
@@ -200,46 +213,31 @@ public class BluetoothChatFragment extends Fragment {
     }
 
     /**
-     * Sends a message.
+     * メッセージの送信メソッド
      *
      * @param message A string of text to send.
      */
     private void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
+        // 何か行う前に接続されているかチェックする
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "あなたのデバイスは接続されていません", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check that there's actually something to send
+        // 送信内容が空でないかチェックする.
         if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
+            // メッセージをバイトコードに変換し、BluetoothChatServiceのwriteメソッドへ送る.
             byte[] send = message.getBytes();
             mChatService.write(send);
 
-            // Reset out string buffer to zero and clear the edit text field
+            // 送信用stringBufferと、入力されたエディットテキストをリセットする.
             mOutStringBuffer.setLength(0);
             mOutEditText.setText(mOutStringBuffer);
         }
     }
 
     /**
-     * The action listener for the EditText widget, to listen for the return key
-     */
-    private TextView.OnEditorActionListener mWriteListener
-            = new TextView.OnEditorActionListener() {
-        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-            // If the action is a key-up event on the return key, send the message
-            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
-                String message = view.getText().toString();
-                sendMessage(message);
-            }
-            return true;
-        }
-    };
-
-    /**
-     * Updates the status on the action bar.
+     * アクションバーのステータスを更新する.
      *
      * @param resId a string resource ID
      */

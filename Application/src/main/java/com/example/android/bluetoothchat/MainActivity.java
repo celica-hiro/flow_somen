@@ -39,18 +39,19 @@ public class MainActivity extends SampleActivityBase {
 
     public static final String TAG = "MainActivity";
 
-    // Whether the Log Fragment is currently shown
-    private boolean mLogShown;
-
+    //Activityの最初に呼ばれる、メインで記述するメソッド
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //Fragmentを追加、削除、他のFragmentと差し替えたりという一連の操作は、FragmentTransactionを使う
         if (savedInstanceState == null) {
+            //Fragmentを使用する時に以下2行がデフォルトみたい
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             BluetoothChatFragment fragment = new BluetoothChatFragment();
+            //ActivityへFragmentを組み込む
             transaction.replace(R.id.sample_content_fragment, fragment);
+            //決定
             transaction.commit();
         }
     }
