@@ -35,6 +35,13 @@ import java.util.UUID;
  * connections with other devices. It has a thread that listens for
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
+ * このクラスは、設定とBluetoothを管理するためのすべての作業を行い
+ * 他のデバイスとの接続する。
+ *
+ * ・着信接続リッスンスレッド
+ * ・デバイスと接続するためのスレッド
+ * ・接続されたときにデータ伝送を行うためのスレッド
+ *
  */
 public class BluetoothChatService {
     // Debugging
@@ -60,10 +67,10 @@ public class BluetoothChatService {
     private int mState;
 
     // Constants that indicate the current connection state
-    public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
-    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    public static final int STATE_NONE = 0;       // 未通信状態
+    public static final int STATE_LISTEN = 1;     // 接続受信状態?
+    public static final int STATE_CONNECTING = 2; // 送信接続開始状態
+    public static final int STATE_CONNECTED = 3;  // リモート接続完了状態?
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
@@ -78,20 +85,20 @@ public class BluetoothChatService {
     }
 
     /**
-     * Set the current state of the chat connection
+     * 現在のチャットの接続状態を設定する.
      *
      * @param state An integer defining the current connection state
      */
     private synchronized void setState(int state) {
-//        Log.d(TAG, "setState() " + mState + " -> " + state);
         mState = state;
 
         // Give the new state to the Handler so the UI Activity can update
+        //UIアクティビティを更新できるようにハンドラに新しい状態を与えます
         mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     /**
-     * Return the current connection state.
+     * 現在の接続状態を返す.
      */
     public synchronized int getState() {
         return mState;
@@ -100,17 +107,19 @@ public class BluetoothChatService {
     /**
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume()
+     * チャットサービスを開始する.
+     * 具体的にリスニング（サーバー）モードで*セッションを開始するスレッドを受け入れ始めます。
+     * MainActivityのonResumeによって呼び出される.
      */
     public synchronized void start() {
-//        Log.d(TAG, "start");
 
-        // Cancel any thread attempting to make a connection
+        // 接続を行う為に使用する全てのスレッドをキャンセルする.
         if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
         }
 
-        // Cancel any thread currently running a connection
+        // 現在の接続を実行している任意のスレッドをキャンセルする.
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
@@ -119,6 +128,7 @@ public class BluetoothChatService {
         setState(STATE_LISTEN);
 
         // Start the thread to listen on a BluetoothServerSocket
+        //BluetoothServerSocketをリッスンするためのスレッドを起動します。
         if (mSecureAcceptThread == null) {
             mSecureAcceptThread = new AcceptThread(true);
             mSecureAcceptThread.start();
@@ -131,14 +141,14 @@ public class BluetoothChatService {
 
     /**
      * Start the ConnectThread to initiate a connection to a remote device.
+     * リモートデバイスへの接続を開始するConnectThreadを開始します。
      *
      * @param device The BluetoothDevice to connect
      * @param secure Socket Security type - Secure (true) , Insecure (false)
      */
     public synchronized void connect(BluetoothDevice device, boolean secure) {
-//        Log.d(TAG, "connect to: " + device);
 
-        // Cancel any thread attempting to make a connection
+        // 接続を行うために試みるすべてのスレッドをキャンセル
         if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
@@ -146,13 +156,13 @@ public class BluetoothChatService {
             }
         }
 
-        // Cancel any thread currently running a connection
+        // 現在の接続を実行している任意のスレッドをキャンセル
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
 
-        // Start the thread to connect with the given device
+        // 指定されたデバイスと接続するためのスレッドを起動します。
         mConnectThread = new ConnectThread(device, secure);
         mConnectThread.start();
         setState(STATE_CONNECTING);
@@ -205,7 +215,7 @@ public class BluetoothChatService {
     }
 
     /**
-     * Stop all threads
+     * 全てのスレッドを停止する.
      */
     public synchronized void stop() {
 //        Log.d(TAG, "stop");
@@ -233,7 +243,7 @@ public class BluetoothChatService {
     }
 
     /**
-     * Write to the ConnectedThread in an unsynchronized manner
+     * 非同期の方法でConnectedThreadに書きます
      *
      * @param out The bytes to write
      * @see ConnectedThread#write(byte[])
@@ -246,7 +256,6 @@ public class BluetoothChatService {
             if (mState != STATE_CONNECTED) return;
             r = mConnectedThread;
         }
-        // Perform the write unsynchronized
         r.write(out);
     }
 
@@ -491,6 +500,7 @@ public class BluetoothChatService {
 
         /**
          * Write to the connected OutStream.
+         * 接続OUTSTREAMに書きます
          *
          * @param buffer The bytes to write
          */

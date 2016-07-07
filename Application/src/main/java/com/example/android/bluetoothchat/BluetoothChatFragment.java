@@ -27,6 +27,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,7 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * This fragment controls Bluetooth to communicate with other devices.
+ * このフラグメントは、Bluetoothが他のデバイスと通信するように制御する.
  */
 public class BluetoothChatFragment extends Fragment {
 
@@ -300,6 +301,7 @@ public class BluetoothChatFragment extends Fragment {
                     mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
+                    Log.i("ログ","受け取りました");
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
