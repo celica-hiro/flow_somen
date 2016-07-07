@@ -13,8 +13,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+
 
 public class CatchBallSample extends Activity {
     // スレッドクラス
@@ -24,18 +23,20 @@ public class CatchBallSample extends Activity {
     // 画面サイズ取得
     Point displayPoint = new Point(0, 0);
     //タッチイベント用x座標、y座標
-    Point eventRange = new Point( 0, 0);
+    Point eventRange = new Point(0, 0);
     //移動画像の停止フラグ
     Boolean isStop = false;
+    //タップフラグ
+    Boolean isTach = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         // ディスプレイサイズを取得する.
         Display disp = wm.getDefaultDisplay();
         disp.getSize(displayPoint);
-        displayPoint.set(displayPoint.x , displayPoint.y);
+        displayPoint.set(displayPoint.x, displayPoint.y);
         //描画Viewを画面に設定する.
         setContentView(new DrawSurfaceView(this));
     }
@@ -44,11 +45,12 @@ public class CatchBallSample extends Activity {
     class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
         // 円のX,Y座標
-        private int circleX = displayPoint.x/2;
+        private int circleX = displayPoint.x / 2;
         private int circleY = 0;
         // 円の移動量
         private int circleVx = 5;
         private int circleVy = 5;
+        private int range = 40;
 
         public DrawSurfaceView(Context context) {
             super(context);
@@ -86,6 +88,7 @@ public class CatchBallSample extends Activity {
         public void run() {
             // Runnableインターフェースをimplementsしているので、runメソッドを実装する
             while (!isStop) {
+                isTach = false;
                 Canvas canvas = getHolder().lockCanvas();
                 if (canvas != null) {
                     canvas.drawColor(Color.BLACK);
@@ -94,46 +97,40 @@ public class CatchBallSample extends Activity {
                     // 青の太い線
                     paint.setColor(Color.WHITE);
                     paint.setStrokeWidth(10);
-                    float[] pts2 = {0, displayPoint.y/2+30, displayPoint.x, displayPoint.y/2+30};
+                    float[] pts2 = {0, displayPoint.y / 2 + range, displayPoint.x, displayPoint.y / 2 + range};
                     canvas.drawLines(pts2, paint);
 
-                    float[] pts3 = {0, displayPoint.y/2-30, displayPoint.x, displayPoint.y/2-30};
+                    float[] pts3 = {0, displayPoint.y / 2 - range, displayPoint.x, displayPoint.y / 2 - range};
                     canvas.drawLines(pts3, paint);
 
                     getHolder().unlockCanvasAndPost(canvas);
 
                     // 円の座標を移動させる
-//                    circleX += circleVx;
                     circleY += circleVy;
                     // 画面の領域を超えた？
-//                    if (circleX < 0 || getWidth() < circleX) circleVx *= -1;
                     if (circleY < 0 || getHeight() < circleY) circleVy *= -1;
                 }
 
-                if(circleY <= displayPoint.y/2+30 && circleY >= displayPoint.y/2-30){
-                    if(eventRange.y <= displayPoint.y/2+30 && eventRange.y >= displayPoint.y/2-30){
+                if (circleY <= displayPoint.y / 2 + range && circleY >= displayPoint.y / 2 - range) {
+                    if (isTach) {
                         isStop = true;
-                        Log.i("ログ","移動画像とタッチ位置がマッチしました");
+                        Log.i("ログ", "移動画像とタッチ位置がマッチしました");
                     }
                 }
             }
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         Thread.interrupted();
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.i("ログ","タッチイベント発生");
-        if(event.getY() <= displayPoint.y/2+30 && event.getY() >= displayPoint.y/2-30){
-            eventRange.set((int)event.getX(), (int)event.getY());
-            Log.i("ログ", "タッチされました");
-        }
-
-
-
+        Log.i("ログ", "タッチイベント発生");
+        isTach = true;
         return true;
     }
 }
