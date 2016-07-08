@@ -43,6 +43,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 /**
  * このフラグメントは、Bluetoothが他のデバイスと通信するように制御する.
  */
@@ -56,7 +58,7 @@ public class BluetoothChatFragment extends Fragment {
     private static final int REQUEST_ENABLE_BT = 3;
 
     // Layout Views
-    private ListView mConversationView;
+    private TextView mValueIndicateText;
     private EditText mOutEditText;
     private Button mSendButton;
 
@@ -64,11 +66,6 @@ public class BluetoothChatFragment extends Fragment {
      * 接続されたデバイスの名前
      */
     private String mConnectedDeviceName = null;
-
-    /**
-     * 会話スレッドのArrayadapter
-     */
-    private ArrayAdapter<String> mConversationArrayAdapter;
 
     /**
      * 送信メッセージの為のString buffer
@@ -152,14 +149,24 @@ public class BluetoothChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        //TODO レイアウトxmlを使っていない記述の場合こっちで対応できるか試す
+//        if(container ==null) return null;
+//            container.addView(new Button(getActivity()));
         return inflater.inflate(R.layout.fragment_bluetooth_chat, container, false);
     }
 
+    /***
+     *
+     * ActivityでいうonCreate的なメソッド、getActivityで親のActivityのContextをとってこれる
+     * メイン処理はここで書くっぽい
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
+        mValueIndicateText = (TextView) view.findViewById(R.id.valueindicateText);
+
+
     }
 
     /**
@@ -168,11 +175,6 @@ public class BluetoothChatFragment extends Fragment {
      */
     private void setupChat() {
 
-        // Initialize the array adapter for the conversation thread
-        //会話スレッド用のアダプタを初期化します
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
-
-        mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the send button with a listener that for click events
         mSendButton.setOnClickListener(new View.OnClickListener() {
@@ -220,10 +222,10 @@ public class BluetoothChatFragment extends Fragment {
      */
     private void sendMessage(String message) {
         // 何か行う前に接続されているかチェックする
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), "あなたのデバイスは接続されていません", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+//            Toast.makeText(getActivity(), "あなたのデバイスは接続されていません", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
         // 送信内容が空でないかチェックする.
         if (message.length() > 0) {
@@ -283,7 +285,6 @@ public class BluetoothChatFragment extends Fragment {
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            mConversationArrayAdapter.clear();
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -294,18 +295,20 @@ public class BluetoothChatFragment extends Fragment {
                             break;
                     }
                     break;
+                //ここでメッセージをリストに表示させていた?
                 case Constants.MESSAGE_WRITE:
+                    Log.i("ログ","書き込みました");
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    mValueIndicateText.setText(writeMessage);
                     break;
+                //メッセージの受け取り
                 case Constants.MESSAGE_READ:
                     Log.i("ログ","受け取りました");
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name

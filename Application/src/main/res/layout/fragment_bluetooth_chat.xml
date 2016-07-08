@@ -19,18 +19,15 @@
               android:layout_height="match_parent"
               android:orientation="vertical" >
 
-    <ListView
-        android:id="@+id/in"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/valueindicateText"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
 
         <EditText
             android:id="@+id/edit_text_out"
