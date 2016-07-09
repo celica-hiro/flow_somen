@@ -1,5 +1,6 @@
 package com.example.android.GameScreen;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,7 +27,11 @@ public class TopScreen extends Activity implements View.OnClickListener{
         reciveButton = (Button)findViewById(R.id.receive_button);
         reciveButton.setOnClickListener(this);
 
+        ActionBar somenActionBar = getActionBar();
+        somenActionBar.hide();
+
     }
+
 
     public void onClick(View view){
         Intent moveMainActivityIntent = new Intent(this ,MainActivity.class);
