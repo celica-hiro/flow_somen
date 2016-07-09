@@ -22,9 +22,11 @@ public class TopScreen extends Activity implements View.OnClickListener{
         setContentView(R.layout.top_screen);
 
         sendButton = (Button)findViewById(R.id.send_button);
+        sendButton.setAlpha(0.9f);
         sendButton.setOnClickListener(this);
 
         reciveButton = (Button)findViewById(R.id.receive_button);
+        reciveButton.setAlpha(0.9f);
         reciveButton.setOnClickListener(this);
 
         ActionBar somenActionBar = getActionBar();

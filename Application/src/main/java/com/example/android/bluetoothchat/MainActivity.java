@@ -32,8 +32,6 @@ public class MainActivity extends FragmentActivity {
     //1 : 送り手
     //2 : 受け手
     public static int currentScreen;
-    public static int displayPointSizeX;
-    public static int displayPointSizeY;
 
     //Activityの最初に呼ばれる、メインで記述するメソッド
     @Override
