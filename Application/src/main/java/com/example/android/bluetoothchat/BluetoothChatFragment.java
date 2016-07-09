@@ -28,20 +28,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.android.GameScreen.SendSomenScreen;
 
 import org.w3c.dom.Text;
 
@@ -149,11 +148,17 @@ public class BluetoothChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        //TODO レイアウトxmlを使っていない記述の場合こっちで対応できるか試す
-//        if(container ==null) return null;
-//            container.addView(new Button(getActivity()));
-        return inflater.inflate(R.layout.fragment_bluetooth_chat, container, false);
-    }
+        LinearLayout ll = new LinearLayout(getActivity());
+        mOutEditText = new EditText(getActivity());
+        mSendButton = new Button(getActivity());
+        mValueIndicateText = new TextView(getActivity());
+        ll.addView(mOutEditText);
+        ll.addView(mSendButton);
+        ll.addView(mValueIndicateText);
+        SendSomenScreen sss = new SendSomenScreen();
+        return sss.CreateView(getActivity());
+//        return inflater.inflate(R.layout.fragment_bluetooth_chat, container, false);
+   }
 
     /***
      *
@@ -162,10 +167,9 @@ public class BluetoothChatFragment extends Fragment {
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
-        mSendButton = (Button) view.findViewById(R.id.button_send);
-        mValueIndicateText = (TextView) view.findViewById(R.id.valueindicateText);
-
+//        mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
+//        mSendButton = (Button) view.findViewById(R.id.button_send);
+//        mValueIndicateText = (TextView) view.findViewById(R.id.valueindicateText);
 
     }
 
@@ -182,11 +186,11 @@ public class BluetoothChatFragment extends Fragment {
                 // Send a message using content of the edit text widget
                 View view = getView();
                 if (null != view) {
-                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
+//                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
+                    TextView textView = new TextView(getActivity());
+                    textView.setText(mOutEditText.getText().toString());
                     String message = textView.getText().toString();
-                    String testMessage = "aiueo";
-
-                    sendMessage(testMessage);
+                    sendMessage(message);
                 }
             }
         });
@@ -309,6 +313,7 @@ public class BluetoothChatFragment extends Fragment {
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getActivity(),readMessage,Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name

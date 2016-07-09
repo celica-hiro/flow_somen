@@ -17,7 +17,7 @@ public class TopScreen extends Activity{
         setContentView(ll);
 
         TextView tv  = new TextView(this);
-        tv.setText("テスト");
+        tv.setText("トップ画面");
         ll.addView(tv);
     }
 }
