@@ -1,30 +1,20 @@
 package com.example.android.GameScreen;
 
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.media.Image;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.WindowManager;
 
 public class ReceiveSomenScreen extends Fragment{
     // スレッドクラス
@@ -45,34 +35,35 @@ public class ReceiveSomenScreen extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        LinearLayout ll = new LinearLayout(getActivity());
-        TextView tv = new TextView(getActivity());
-        tv.setText("フラグメントReceiveSomenScreen画面！");
-        ll.addView(tv);
+//        LinearLayout ll = new LinearLayout(getActivity());
+//        TextView tv = new TextView(getActivity());
+//        tv.setText("フラグメントReceiveSomenScreen画面！");
+//        ll.addView(tv);
 
-        ll.setOnTouchListener(new View.OnTouchListener() {
+        DrawSurfaceView dsv = new DrawSurfaceView(getActivity());
+        dsv.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-
-                if(event.getAction() == MotionEvent.ACTION_MOVE){
-
-                }
+                Log.i("ログ", "タッチイベント発生");
+                isTach = true;
+//                if(event.getAction() == MotionEvent.ACTION_MOVE){
+//                }
                 return true;
             }
         });
-        return ll;
+        return dsv;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowManager wm = (WindowManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        //WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-        // ディスプレイサイズを取得する.
-        Display disp = wm.getDefaultDisplay();
-        disp.getSize(displayPoint);
-        displayPoint.set(displayPoint.x, displayPoint.y);
-        //描画Viewを画面に設定する.
-        //setContentView(new DrawSurfaceView(this));
+//        WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+//        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+//        // ディスプレイサイズを取得する.
+//        Display disp = wm.getDefaultDisplay();
+//        disp.getSize(displayPoint);
+//        displayPoint.set(displayPoint.x, displayPoint.y);
+//        //描画Viewを画面に設定する.
+//        setContentView(new DrawSurfaceView(this));
     }
 
     // SurfaceViewを描画するクラス
@@ -161,10 +152,4 @@ public class ReceiveSomenScreen extends Fragment{
         Thread.interrupted();
     }
 
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        Log.i("ログ", "タッチイベント発生");
-//        isTach = true;
-//        return true;
-//    }
 }
