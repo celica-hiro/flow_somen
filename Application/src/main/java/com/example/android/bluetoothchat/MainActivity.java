@@ -2,8 +2,8 @@ package com.example.android.bluetoothchat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import com.example.android.common.activities.SampleActivityBase;
 
 /**
  * A simple launcher activity containing a summary sample description, sample log and a custom
@@ -16,14 +16,14 @@ import com.example.android.common.activities.SampleActivityBase;
  * 720dp以上の幅を持つディスプレイを備えたデバイスの場合、サンプル・ログは、常に表示されます
  * 他のデバイス上では視認性がアクションバーの項目によって制御されます。
  */
-public class MainActivity extends SampleActivityBase {
+public class MainActivity extends FragmentActivity {
 
     public static final String TAG = "MainActivity";
 
     //受け手、送り手画面のフラグ
     //0 : 未設定
-    //1 : 受け手
-    //2 : 送り手
+    //1 : 送り手
+    //2 : 受け手
     public static int currentScreen;
 
     //Activityの最初に呼ばれる、メインで記述するメソッド
