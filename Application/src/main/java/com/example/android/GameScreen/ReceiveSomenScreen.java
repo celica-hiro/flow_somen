@@ -35,18 +35,11 @@ public class ReceiveSomenScreen extends Fragment{
     //タップフラグ
     Boolean isTach = false;
 
-    Context context;
-
-    Bitmap bmp;
+    Bitmap bmp = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-//        LinearLayout ll = new LinearLayout(getActivity());
-//        TextView tv = new TextView(getActivity());
-//        tv.setText("フラグメントReceiveSomenScreen画面！");
-//        ll.addView(tv);
-
         DrawSurfaceView dsv = new DrawSurfaceView(getActivity());
         dsv.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -63,14 +56,6 @@ public class ReceiveSomenScreen extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
-//        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-//        // ディスプレイサイズを取得する.
-//        Display disp = wm.getDefaultDisplay();
-//        disp.getSize(displayPoint);
-//        displayPoint.set(displayPoint.x, displayPoint.y);
-//        //描画Viewを画面に設定する.
-//        setContentView(new DrawSurfaceView(this));
     }
 
     // SurfaceViewを描画するクラス
@@ -80,42 +65,42 @@ public class ReceiveSomenScreen extends Fragment{
         private int circleX = MainActivity.displayWidth / 2;
         private int circleY = 0;
         // 円の移動量
-        private int circleVx = 5;
-        private int circleVy = 5;
+        private int circleVy = 10;
         private int range = 40;
 
         public DrawSurfaceView(Context context) {
             super(context);
-            this.setBackgroundResource(R.drawable.flowsomen);
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.flowsomen);
             // SurfaceView描画に用いるコールバックを登録する。
             getHolder().addCallback(this);
             // 描画用の準備
             paint = new Paint();
-            paint.setColor(Color.WHITE);
-            // スレッド開始
-            mainLoop = new Thread(this);
-            mainLoop.start();
+            paint.setColor(Color.BLACK);
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                    int height) {
-            // TODO 今回は何もしない。
+            //画面サイズを設定する.
+            displayPoint.set(width,height);
         }
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             // SurfaceView生成時に呼び出されるメソッド。
             // 今はとりあえず背景を白にするだけ。
-            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.flowsomen);
             Canvas canvas = holder.lockCanvas();
             canvas.drawColor(Color.BLACK);
             holder.unlockCanvasAndPost(canvas);
+            // スレッド開始
+            mainLoop = new Thread(this);
+            mainLoop.start();
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             // TODO 今回は何もしない。
+            isStop = true;
         }
 
         @Override
@@ -125,12 +110,12 @@ public class ReceiveSomenScreen extends Fragment{
                 isTach = false;
                 Canvas canvas = getHolder().lockCanvas();
                 if (canvas != null) {
+                    canvas.drawColor(Color.WHITE);
 
-                    canvas.drawColor(Color.BLACK);
+                    canvas.drawBitmap(bmp, 0, 0, null);
                     // 円を描画する
                     canvas.drawCircle(circleX, circleY, 30, paint);
-                    // 青の太い線
-                    paint.setColor(Color.WHITE);
+                    // 黒い太い線
                     paint.setStrokeWidth(10);
                     float[] pts2 = {0, MainActivity.displayHeight / 2 + range, MainActivity.displayWidth, MainActivity.displayHeight / 2 + range};
                     canvas.drawLines(pts2, paint);
@@ -138,7 +123,6 @@ public class ReceiveSomenScreen extends Fragment{
                     float[] pts3 = {0, MainActivity.displayHeight / 2 - range, MainActivity.displayWidth, MainActivity.displayHeight / 2 - range};
                     canvas.drawLines(pts3, paint);
 
-                    canvas.drawBitmap(bmp, 0, 0, null);
 
                     getHolder().unlockCanvasAndPost(canvas);
 
@@ -147,12 +131,12 @@ public class ReceiveSomenScreen extends Fragment{
                     // 画面の領域を超えた？
                     if (circleY < 0 || getHeight() < circleY) circleVy *= -1;
                 }
+            }
 
-                if (circleY <= displayPoint.y / 2 + range && circleY >= displayPoint.y / 2 - range) {
-                    if (isTach) {
-                        isStop = true;
-                        Log.i("ログ", "移動画像とタッチ位置がマッチしました");
-                    }
+            if (circleY <= MainActivity.displayHeight / 2 + range && circleY >= MainActivity.displayWidth / 2 - range) {
+                if (isTach) {
+                    isStop = true;
+                    Log.i("ログ", "移動画像とタッチ位置がマッチしました");
                 }
             }
         }
