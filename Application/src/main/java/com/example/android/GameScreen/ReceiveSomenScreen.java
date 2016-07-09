@@ -49,6 +49,16 @@ public class ReceiveSomenScreen extends Fragment{
         TextView tv = new TextView(getActivity());
         tv.setText("フラグメントReceiveSomenScreen画面！");
         ll.addView(tv);
+
+        ll.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_MOVE){
+
+                }
+                return true;
+            }
+        });
         return ll;
     }
 
