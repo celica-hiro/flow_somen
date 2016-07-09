@@ -65,7 +65,7 @@ public class ReceiveSomenScreen extends Fragment{
         private int circleX = MainActivity.displayWidth / 2;
         private int circleY = 0;
         // 円の移動量
-        private int circleVy = 10;
+        private int circleVy = 5;
         private int range = 40;
 
         public DrawSurfaceView(Context context) {
@@ -133,7 +133,8 @@ public class ReceiveSomenScreen extends Fragment{
                 }
             }
 
-            if (circleY <= MainActivity.displayHeight / 2 + range && circleY >= MainActivity.displayWidth / 2 - range) {
+            if (circleY <= displayPoint.y / 2 + range && circleY >= displayPoint.y / 2 - range) {
+                Log.i("ログ", "移動画像とタッチ位置がマッチしました");
                 if (isTach) {
                     isStop = true;
                     Log.i("ログ", "移動画像とタッチ位置がマッチしました");
