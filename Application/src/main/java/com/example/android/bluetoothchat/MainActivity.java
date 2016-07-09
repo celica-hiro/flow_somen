@@ -1,9 +1,12 @@
 package com.example.android.bluetoothchat;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Display;
+import android.view.WindowManager;
 
 /**
  * A simple launcher activity containing a summary sample description, sample log and a custom
@@ -25,12 +28,21 @@ public class MainActivity extends FragmentActivity {
     //1 : 送り手
     //2 : 受け手
     public static int currentScreen;
+    public static int displayPointSizeX;
+    public static int displayPointSizeY;
 
     //Activityの最初に呼ばれる、メインで記述するメソッド
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //画面サイズの取得
+        WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
+        // ディスプレイのインスタンス生成
+        Display disp = wm.getDefaultDisplay();
+        displayPointSizeX = disp.getHeight();
+        displayPointSizeY = disp.getWidth();
 
         //トップ画面から受け手、送り手フラグを受け取る
         Intent intent = getIntent();
