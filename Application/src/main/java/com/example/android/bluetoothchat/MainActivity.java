@@ -1,5 +1,6 @@
 package com.example.android.bluetoothchat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import com.example.android.common.activities.SampleActivityBase;
@@ -19,11 +20,24 @@ public class MainActivity extends SampleActivityBase {
 
     public static final String TAG = "MainActivity";
 
+    //受け手、送り手画面のフラグ
+    //0 : 未設定
+    //1 : 受け手
+    //2 : 送り手
+    public static int currentScreen;
+
     //Activityの最初に呼ばれる、メインで記述するメソッド
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //トップ画面から受け手、送り手フラグを受け取る
+        Intent intent = getIntent();
+        currentScreen = intent.getIntExtra("CURRENTSCREEN", 0);
+
+
+
         //Fragmentを追加、削除、他のFragmentと差し替えたりという一連の操作は、FragmentTransactionを使う
         if (savedInstanceState == null) {
             //Fragmentを使用する時に以下2行がデフォルトみたい

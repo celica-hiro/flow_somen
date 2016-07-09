@@ -1,23 +1,41 @@
 package com.example.android.GameScreen;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * Created by ishiiyoshikazu on 16/07/07.
- */
-public class TopScreen extends Activity{
+import com.example.android.bluetoothchat.MainActivity;
+import com.example.android.bluetoothchat.R;
+
+public class TopScreen extends Activity implements View.OnClickListener{
+    Button sendButton;
+    Button reciveButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LinearLayout ll = new LinearLayout(this);
-        ll.setOrientation(LinearLayout.VERTICAL);
-        setContentView(ll);
+        setContentView(R.layout.top_screen);
 
-        TextView tv  = new TextView(this);
-        tv.setText("トップ画面");
-        ll.addView(tv);
+        sendButton = (Button)findViewById(R.id.send_button);
+        sendButton.setOnClickListener(this);
+
+        reciveButton = (Button)findViewById(R.id.receive_button);
+        reciveButton.setOnClickListener(this);
+
+    }
+
+    public void onClick(View view){
+        Intent moveMainActivityIntent = new Intent(this ,MainActivity.class);
+        if(view==sendButton){
+            moveMainActivityIntent.putExtra("CURRENTSCREEN", 1);
+        }
+        else if(view==reciveButton){
+            moveMainActivityIntent.putExtra("CURRENTSCREEN", 2);
+        }
+        startActivity(moveMainActivityIntent);
     }
 }

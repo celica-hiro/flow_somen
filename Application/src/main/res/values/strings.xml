@@ -38,4 +38,8 @@
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
 
+    <!-- Top MenuButton -->
+    <string name="send_button">送り手</string>
+    <string name="receive_button">受け手</string>
+
 </resources>

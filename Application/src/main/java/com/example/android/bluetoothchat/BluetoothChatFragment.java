@@ -40,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.GameScreen.ReceiveSomenScreen;
 import com.example.android.GameScreen.SendSomenScreen;
 
 import org.w3c.dom.Text;
@@ -155,13 +156,22 @@ public class BluetoothChatFragment extends Fragment {
         ll.addView(mOutEditText);
         ll.addView(mSendButton);
         ll.addView(mValueIndicateText);
-        SendSomenScreen sss = new SendSomenScreen();
-        return sss.CreateView(getActivity());
-//        return inflater.inflate(R.layout.fragment_bluetooth_chat, container, false);
+        //受け手画面
+        View view = new View(getActivity());
+        if(MainActivity.currentScreen==1) {
+            SendSomenScreen sss = new SendSomenScreen();
+            view = sss.CreateView(getActivity());
+        }
+        //送り手画面
+        else if(MainActivity.currentScreen==2){
+            ReceiveSomenScreen rss = new ReceiveSomenScreen();
+            view = rss.CreateView(getActivity());
+        }
+        ll.addView(view);
+        return ll;
    }
 
     /***
-     *
      * ActivityでいうonCreate的なメソッド、getActivityで親のActivityのContextをとってこれる
      * メイン処理はここで書くっぽい
      */
