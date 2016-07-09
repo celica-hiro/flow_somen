@@ -32,12 +32,22 @@ public class MainActivity extends FragmentActivity {
     //1 : 送り手
     //2 : 受け手
     public static int currentScreen;
+    public static int displayHeight;
+    public static int displayWidth;
 
     //Activityの最初に呼ばれる、メインで記述するメソッド
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //画面サイズの取得
+        WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
+        // ディスプレイのインスタンス生成
+        Display disp = wm.getDefaultDisplay();
+        displayHeight = disp.getHeight();
+        displayWidth = disp.getWidth();
+
 
         //トップ画面から受け手、送り手フラグを受け取る
         Intent intent = getIntent();
