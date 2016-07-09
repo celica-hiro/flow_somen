@@ -1,5 +1,7 @@
 package com.example.android.GameScreen;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.android.bluetoothchat.MainActivity;
+import com.example.android.bluetoothchat.R;
+
 public class ReceiveSomenScreen extends Fragment{
     // スレッドクラス
     Thread mainLoop = null;
@@ -31,6 +36,8 @@ public class ReceiveSomenScreen extends Fragment{
     Boolean isTach = false;
 
     Context context;
+
+    Bitmap bmp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -70,7 +77,7 @@ public class ReceiveSomenScreen extends Fragment{
     class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
         // 円のX,Y座標
-        private int circleX = displayPoint.x / 2;
+        private int circleX = MainActivity.displayWidth / 2;
         private int circleY = 0;
         // 円の移動量
         private int circleVx = 5;
@@ -79,6 +86,7 @@ public class ReceiveSomenScreen extends Fragment{
 
         public DrawSurfaceView(Context context) {
             super(context);
+            this.setBackgroundResource(R.drawable.flowsomen);
             // SurfaceView描画に用いるコールバックを登録する。
             getHolder().addCallback(this);
             // 描画用の準備
@@ -99,6 +107,7 @@ public class ReceiveSomenScreen extends Fragment{
         public void surfaceCreated(SurfaceHolder holder) {
             // SurfaceView生成時に呼び出されるメソッド。
             // 今はとりあえず背景を白にするだけ。
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.flowsomen);
             Canvas canvas = holder.lockCanvas();
             canvas.drawColor(Color.BLACK);
             holder.unlockCanvasAndPost(canvas);
@@ -116,17 +125,20 @@ public class ReceiveSomenScreen extends Fragment{
                 isTach = false;
                 Canvas canvas = getHolder().lockCanvas();
                 if (canvas != null) {
+
                     canvas.drawColor(Color.BLACK);
                     // 円を描画する
                     canvas.drawCircle(circleX, circleY, 30, paint);
                     // 青の太い線
                     paint.setColor(Color.WHITE);
                     paint.setStrokeWidth(10);
-                    float[] pts2 = {0, displayPoint.y / 2 + range, displayPoint.x, displayPoint.y / 2 + range};
+                    float[] pts2 = {0, MainActivity.displayHeight / 2 + range, MainActivity.displayWidth, MainActivity.displayHeight / 2 + range};
                     canvas.drawLines(pts2, paint);
 
-                    float[] pts3 = {0, displayPoint.y / 2 - range, displayPoint.x, displayPoint.y / 2 - range};
+                    float[] pts3 = {0, MainActivity.displayHeight / 2 - range, MainActivity.displayWidth, MainActivity.displayHeight / 2 - range};
                     canvas.drawLines(pts3, paint);
+
+                    canvas.drawBitmap(bmp, 0, 0, null);
 
                     getHolder().unlockCanvasAndPost(canvas);
 
