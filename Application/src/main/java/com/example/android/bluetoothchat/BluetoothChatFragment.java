@@ -157,17 +157,6 @@ public class BluetoothChatFragment extends Fragment {
         ll.addView(mSendButton);
         ll.addView(mValueIndicateText);
         //受け手画面
-        View view = new View(getActivity());
-        if(MainActivity.currentScreen==1) {
-            SendSomenScreen sss = new SendSomenScreen();
-            view = sss.CreateView(getActivity());
-        }
-        //送り手画面
-        else if(MainActivity.currentScreen==2){
-            ReceiveSomenScreen rss = new ReceiveSomenScreen();
-            view = rss.CreateView(getActivity());
-        }
-        ll.addView(view);
         return ll;
    }
 

@@ -3,10 +3,14 @@ package com.example.android.bluetoothchat;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Display;
 import android.view.WindowManager;
+
+import com.example.android.GameScreen.ReceiveSomenScreen;
+import com.example.android.GameScreen.SendSomenScreen;
 
 /**
  * A simple launcher activity containing a summary sample description, sample log and a custom
@@ -37,18 +41,9 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //画面サイズの取得
-        WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
-        // ディスプレイのインスタンス生成
-        Display disp = wm.getDefaultDisplay();
-        displayPointSizeX = disp.getHeight();
-        displayPointSizeY = disp.getWidth();
-
         //トップ画面から受け手、送り手フラグを受け取る
         Intent intent = getIntent();
         currentScreen = intent.getIntExtra("CURRENTSCREEN", 0);
-
-
 
         //Fragmentを追加、削除、他のFragmentと差し替えたりという一連の操作は、FragmentTransactionを使う
         if (savedInstanceState == null) {
@@ -57,6 +52,11 @@ public class MainActivity extends FragmentActivity {
             BluetoothChatFragment fragment = new BluetoothChatFragment();
             //ActivityへFragmentを組み込む
             transaction.replace(R.id.main_content_fragment, fragment);
+
+            Fragment somenScreenFragment = new Fragment();
+            if(currentScreen==1) somenScreenFragment = new SendSomenScreen();
+            else if(currentScreen==2) somenScreenFragment = new ReceiveSomenScreen();
+            transaction.add(R.id.somen_screen, somenScreenFragment);
             //決定
             transaction.commit();
         }
