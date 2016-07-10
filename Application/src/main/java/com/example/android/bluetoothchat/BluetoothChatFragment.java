@@ -185,7 +185,6 @@ public class BluetoothChatFragment extends Fragment {
                 // Send a message using content of the edit text widget
                 View view = getView();
                 if (null != view) {
-//                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
                     TextView textView = new TextView(getActivity());
                     textView.setText(mOutEditText.getText().toString());
                     String message = textView.getText().toString();
@@ -220,15 +219,14 @@ public class BluetoothChatFragment extends Fragment {
 
     /**
      * メッセージの送信メソッド
-     *
      * @param message A string of text to send.
      */
     private void sendMessage(String message) {
         // 何か行う前に接続されているかチェックする
-//        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-//            Toast.makeText(getActivity(), "あなたのデバイスは接続されていません", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            Toast.makeText(getActivity(), "あなたのデバイスは接続されていません", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // 送信内容が空でないかチェックする.
         if (message.length() > 0) {
