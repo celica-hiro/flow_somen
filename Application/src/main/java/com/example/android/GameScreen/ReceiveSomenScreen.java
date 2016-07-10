@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.media.MediaPlayer;
 
 import com.example.android.bluetoothchat.MainActivity;
 import com.example.android.bluetoothchat.R;
@@ -38,6 +39,8 @@ public class ReceiveSomenScreen extends Fragment{
     Bitmap bmp = null;
     Bitmap soumen = null;
 
+    private MediaPlayer mp;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -56,6 +59,8 @@ public class ReceiveSomenScreen extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mp = MediaPlayer.create(getActivity(), R.raw.shower);
+        mp.start();
     }
 
     // SurfaceViewを描画するクラス
@@ -101,6 +106,7 @@ public class ReceiveSomenScreen extends Fragment{
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             // TODO 今回は何もしない。
+            //mp.stop();
             isStop = true;
         }
 
@@ -147,6 +153,7 @@ public class ReceiveSomenScreen extends Fragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mp.stop();
         Thread.interrupted();
     }
 
