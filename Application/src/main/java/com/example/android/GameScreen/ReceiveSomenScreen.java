@@ -36,6 +36,7 @@ public class ReceiveSomenScreen extends Fragment{
     Boolean isTouch = false;
 
     Bitmap bmp = null;
+    Bitmap soumen = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -69,7 +70,8 @@ public class ReceiveSomenScreen extends Fragment{
 
         public DrawSurfaceView(Context context) {
             super(context);
-            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.flowsomen);
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.flow_take);
+            soumen = BitmapFactory.decodeResource(getResources(), R.drawable.soumen);
             // SurfaceView描画に用いるコールバックを登録する。
             getHolder().addCallback(this);
             // 描画用の準備
@@ -112,7 +114,8 @@ public class ReceiveSomenScreen extends Fragment{
 
                     canvas.drawBitmap(bmp, 0, 0, null);
                     // 円を描画する
-                    canvas.drawCircle(circleX, circleY, 30, paint);
+                    //canvas.drawCircle(circleX, circleY, 30, paint);
+                    canvas.drawBitmap(soumen, circleX-200, circleY, null);
                     // 黒い太い線
                     paint.setStrokeWidth(10);
                     float[] pts2 = {0, displayPoint.y / 2 + range, displayPoint.x, displayPoint.y / 2 + range};
