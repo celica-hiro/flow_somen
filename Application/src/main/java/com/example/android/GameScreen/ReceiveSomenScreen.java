@@ -2,6 +2,7 @@ package com.example.android.GameScreen;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 
 import com.example.android.bluetoothchat.MainActivity;
 import com.example.android.bluetoothchat.R;
@@ -40,6 +42,8 @@ public class ReceiveSomenScreen extends Fragment{
     Bitmap soumen = null;
 
     private MediaPlayer mp;
+    SoundPool soundPool;
+    int sound1, sound2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -47,6 +51,7 @@ public class ReceiveSomenScreen extends Fragment{
         DrawSurfaceView dsv = new DrawSurfaceView(getActivity());
         dsv.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
+                soundPool.play(sound1, 1.0F, 1.0F, 0, 0, 1.0F);
                 Log.i("ログ", "タッチイベント発生");
                 isTouch = true;
                 Log.i("ログ","タッチフラグ" + isTouch.toString());
@@ -61,6 +66,9 @@ public class ReceiveSomenScreen extends Fragment{
         super.onCreate(savedInstanceState);
         mp = MediaPlayer.create(getActivity(), R.raw.shower);
         mp.start();
+        soundPool = new SoundPool( 1, AudioManager.STREAM_MUSIC, 0 );;
+        sound1 = soundPool.load(getActivity(), R.raw.se_trumpet, 1);
+        sound2 = soundPool.load(getActivity(), R.raw.se_chime, 1);
     }
 
     // SurfaceViewを描画するクラス
