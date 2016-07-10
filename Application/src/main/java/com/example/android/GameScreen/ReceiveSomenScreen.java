@@ -33,7 +33,7 @@ public class ReceiveSomenScreen extends Fragment{
     //移動画像の停止フラグ
     Boolean isStop = false;
     //タップフラグ
-    Boolean isTach = false;
+    Boolean isTouch = false;
 
     Bitmap bmp = null;
 
@@ -44,9 +44,8 @@ public class ReceiveSomenScreen extends Fragment{
         dsv.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 Log.i("ログ", "タッチイベント発生");
-                isTach = true;
-//                if(event.getAction() == MotionEvent.ACTION_MOVE){
-//                }
+                isTouch = true;
+                Log.i("ログ","タッチフラグ" + isTouch.toString());
                 return true;
             }
         });
@@ -107,7 +106,6 @@ public class ReceiveSomenScreen extends Fragment{
         public void run() {
             // Runnableインターフェースをimplementsしているので、runメソッドを実装する
             while (!isStop) {
-                isTach = false;
                 Canvas canvas = getHolder().lockCanvas();
                 if (canvas != null) {
                     canvas.drawColor(Color.WHITE);
@@ -117,12 +115,11 @@ public class ReceiveSomenScreen extends Fragment{
                     canvas.drawCircle(circleX, circleY, 30, paint);
                     // 黒い太い線
                     paint.setStrokeWidth(10);
-                    float[] pts2 = {0, MainActivity.displayHeight / 2 + range, MainActivity.displayWidth, MainActivity.displayHeight / 2 + range};
+                    float[] pts2 = {0, displayPoint.y / 2 + range, displayPoint.x, displayPoint.y / 2 + range};
                     canvas.drawLines(pts2, paint);
 
-                    float[] pts3 = {0, MainActivity.displayHeight / 2 - range, MainActivity.displayWidth, MainActivity.displayHeight / 2 - range};
+                    float[] pts3 = {0, displayPoint.y / 2 - range, displayPoint.x, displayPoint.y / 2 - range};
                     canvas.drawLines(pts3, paint);
-
 
                     getHolder().unlockCanvasAndPost(canvas);
 
@@ -131,15 +128,16 @@ public class ReceiveSomenScreen extends Fragment{
                     // 画面の領域を超えた？
                     if (circleY < 0 || getHeight() < circleY) circleVy *= -1;
                 }
-            }
-
-            if (circleY <= displayPoint.y / 2 + range && circleY >= displayPoint.y / 2 - range) {
-                Log.i("ログ", "移動画像とタッチ位置がマッチしました");
-                if (isTach) {
-                    isStop = true;
+                if (circleY <= displayPoint.y / 2 + range && circleY >= displayPoint.y / 2 - range) {
                     Log.i("ログ", "移動画像とタッチ位置がマッチしました");
+                    if (isTouch) {
+                        isStop = true;
+                        Log.i("ログ", "移動画像とタッチ位置がマッチしました");
+                    }
                 }
             }
+
+
         }
     }
 
