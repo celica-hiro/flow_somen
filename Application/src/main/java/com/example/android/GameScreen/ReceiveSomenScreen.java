@@ -58,7 +58,6 @@ public class ReceiveSomenScreen extends Fragment{
 
 
             public boolean onTouch(View v, MotionEvent event) {
-                soundPool.play(sound1, 1.0F, 1.0F, 0, 0, 1.0F);
                 Log.i("ログ", "タッチイベント発生");
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
                     isTouch = true;
