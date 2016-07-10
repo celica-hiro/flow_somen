@@ -2,6 +2,9 @@ package com.example.android.GameScreen;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,8 +20,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import com.example.android.bluetoothchat.MainActivity;
+import com.example.android.bluetoothchat.BluetoothChatFragment;
 import com.example.android.bluetoothchat.R;
 
 public class SendSomenScreen extends Fragment{
@@ -35,7 +40,14 @@ public class SendSomenScreen extends Fragment{
     //タップフラグ
     Boolean isTouch = false;
 
+    double count;
+
     Bitmap bmp = null;
+    Bitmap soumen = null;
+
+    private MediaPlayer mp;
+    SoundPool soundPool;
+    int sound1, sound2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -43,6 +55,7 @@ public class SendSomenScreen extends Fragment{
         DrawSurfaceView dsv = new DrawSurfaceView(getActivity());
         dsv.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
+                soundPool.play(sound1, 1.0F, 1.0F, 0, 0, 1.0F);
                 Log.i("ログ", "タッチイベント発生");
                 isTouch = true;
                 Log.i("ログ","タッチフラグ" + isTouch.toString());
@@ -55,6 +68,10 @@ public class SendSomenScreen extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mp = MediaPlayer.create(getActivity(), R.raw.shower);
+        mp.start();
+        soundPool = new SoundPool( 1, AudioManager.STREAM_MUSIC, 0 );
+        sound2 = soundPool.load(getActivity(), R.raw.se_chime, 1);
     }
 
     // SurfaceViewを描画するクラス
@@ -69,7 +86,8 @@ public class SendSomenScreen extends Fragment{
 
         public DrawSurfaceView(Context context) {
             super(context);
-            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.flowsomen);
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.flow_take);
+            soumen = BitmapFactory.decodeResource(getResources(), R.drawable.soumen);
             // SurfaceView描画に用いるコールバックを登録する。
             getHolder().addCallback(this);
             // 描画用の準備
@@ -112,12 +130,19 @@ public class SendSomenScreen extends Fragment{
 
                     canvas.drawBitmap(bmp, 0, 0, null);
                     // 円を描画する
-                    canvas.drawCircle(circleX, circleY, 30, paint);
+                    canvas.drawBitmap(soumen, circleX-200, circleY, null);
 
                     getHolder().unlockCanvasAndPost(canvas);
 
                     // 円の座標を移動させる
-                    circleY += circleVy*0.5;
+                    if(isTouch) {
+                        circleY += circleVy;
+                    }
+                    if (circleY < 0 || getHeight() < circleY) {
+                        BluetoothChatFragment bcf = new BluetoothChatFragment();
+                        Log.i("log","log" + bcf);
+                        bcf.sendMessage("1");
+                    }
                 }
             }
 
