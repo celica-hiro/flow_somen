@@ -172,15 +172,14 @@ public class ReceiveSomenScreen extends Fragment{
                     if (circleY > displayPoint.y) {
 //                        Toast.makeText(getActivity(),"ゲームオーバー",Toast.LENGTH_SHORT).show();
                         BluetoothChatFragment.isReceive = false;
+                        soundPool.play(sound2, 1.0F, 1.0F, 0, 0, 1.0F);
                     }
                 }
                 getHolder().unlockCanvasAndPost(canvas);
                 if (circleY <= displayPoint.y / 2 + range && circleY >= displayPoint.y / 2 - range) {
-                    Log.i("ログ", "移動画像とタッチ位置がマッチしました");
                     if (isTouch) {
                         isStop = true;
-                        Log.i("ログ", "移動画像とタッチ位置がマッチしました");
-//                        Toast.makeText(getActivity(),"クリア",Toast.LENGTH_SHORT).show();
+                        soundPool.play(sound1, 1.0F, 1.0F, 0, 0, 1.0F);
                         BluetoothChatFragment.isReceive = false;
                     }
                 }
