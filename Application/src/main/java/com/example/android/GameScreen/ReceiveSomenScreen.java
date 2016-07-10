@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,6 +22,8 @@ import android.view.SurfaceView;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 
+import com.example.android.bluetoothchat.BluetoothChatFragment;
+import com.example.android.bluetoothchat.BluetoothChatService;
 import com.example.android.bluetoothchat.MainActivity;
 import com.example.android.bluetoothchat.R;
 
@@ -49,12 +52,17 @@ public class ReceiveSomenScreen extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         DrawSurfaceView dsv = new DrawSurfaceView(getActivity());
+
         dsv.setOnTouchListener(new View.OnTouchListener() {
+
+
             public boolean onTouch(View v, MotionEvent event) {
                 soundPool.play(sound1, 1.0F, 1.0F, 0, 0, 1.0F);
                 Log.i("ログ", "タッチイベント発生");
-                isTouch = true;
-                Log.i("ログ","タッチフラグ" + isTouch.toString());
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    isTouch = true;
+                    Log.i("ログ","タッチフラグ" + isTouch.toString());
+                }
                 return true;
             }
         });
@@ -71,15 +79,19 @@ public class ReceiveSomenScreen extends Fragment{
         sound2 = soundPool.load(getActivity(), R.raw.se_chime, 1);
     }
 
+
     // SurfaceViewを描画するクラス
     class DrawSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
         // 円のX,Y座標
         private int circleX = MainActivity.displayWidth / 2;
-        private int circleY = 0;
+        private int circleY = 10000;
         // 円の移動量
         private int circleVy = 5;
         private int range = 40;
+
+        BluetoothChatFragment bcf = new BluetoothChatFragment();
+
 
         public DrawSurfaceView(Context context) {
             super(context);
@@ -120,8 +132,13 @@ public class ReceiveSomenScreen extends Fragment{
 
         @Override
         public void run() {
+
+
             // Runnableインターフェースをimplementsしているので、runメソッドを実装する
             while (!isStop) {
+                if (bcf.spead != "0") {
+                    circleY = 0;
+                }
                 Canvas canvas = getHolder().lockCanvas();
                 if (canvas != null) {
                     canvas.drawColor(Color.WHITE);
@@ -143,7 +160,7 @@ public class ReceiveSomenScreen extends Fragment{
                     // 円の座標を移動させる
                     circleY += circleVy;
                     // 画面の領域を超えた？
-                    if (circleY < 0 || getHeight() < circleY) circleVy *= -1;
+                    //if (circleY < 0 || getHeight() < circleY) circleVy *= -1;
                 }
                 if (circleY <= displayPoint.y / 2 + range && circleY >= displayPoint.y / 2 - range) {
                     Log.i("ログ", "移動画像とタッチ位置がマッチしました");
