@@ -21,6 +21,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.widget.Toast;
 
 import com.example.android.bluetoothchat.BluetoothChatFragment;
 import com.example.android.bluetoothchat.BluetoothChatService;
@@ -85,7 +86,7 @@ public class ReceiveSomenScreen extends Fragment{
 
         // 円のX,Y座標
         private int circleX = MainActivity.displayWidth / 2;
-        private int circleY = 10000;
+        private int circleY = -400;
         // 円の移動量
         private int circleVy = 5;
         private int range = 40;
@@ -132,12 +133,17 @@ public class ReceiveSomenScreen extends Fragment{
 
         @Override
         public void run() {
-
-
             // Runnableインターフェースをimplementsしているので、runメソッドを実装する
             while (!isStop) {
                 if (bcf.spead != "0") {
-                    circleY = 0;
+                    circleVy = 15;
+//                    if (bcf.spead.equals("1")) {
+//                        circleVy = 5;
+//                    } else if (bcf.spead.equals("2")) {
+//                        circleVy = 10;
+//                    } else if (bcf.spead.equals("3")) {
+//                        circleVy = 15;
+//                    }
                 }
                 Canvas canvas = getHolder().lockCanvas();
                 if (canvas != null) {
@@ -146,32 +152,39 @@ public class ReceiveSomenScreen extends Fragment{
                     canvas.drawBitmap(bmp, 0, 0, null);
                     // 円を描画する
                     //canvas.drawCircle(circleX, circleY, 30, paint);
-                    canvas.drawBitmap(soumen, circleX-200, circleY, null);
+
                     // 黒い太い線
-                    paint.setStrokeWidth(10);
-                    float[] pts2 = {0, displayPoint.y / 2 + range, displayPoint.x, displayPoint.y / 2 + range};
-                    canvas.drawLines(pts2, paint);
+//                    paint.setStrokeWidth(10);
+//                    float[] pts2 = {0, displayPoint.y / 2 + range, displayPoint.x, displayPoint.y / 2 + range};
+//                    canvas.drawLines(pts2, paint);
+//
+//                    float[] pts3 = {0, displayPoint.y / 2 - range, displayPoint.x, displayPoint.y / 2 - range};
+//                    canvas.drawLines(pts3, paint);
 
-                    float[] pts3 = {0, displayPoint.y / 2 - range, displayPoint.x, displayPoint.y / 2 - range};
-                    canvas.drawLines(pts3, paint);
 
-                    getHolder().unlockCanvasAndPost(canvas);
+                        canvas.drawBitmap(soumen, circleX - 200, circleY, null);
 
-                    // 円の座標を移動させる
-                    circleY += circleVy;
+                  if(BluetoothChatFragment.isReceive) {
+                        // 円の座標を移動させる
+                     circleY += circleVy;
+                  }
                     // 画面の領域を超えた？
-                    //if (circleY < 0 || getHeight() < circleY) circleVy *= -1;
+                    if (circleY > displayPoint.y) {
+//                        Toast.makeText(getActivity(),"ゲームオーバー",Toast.LENGTH_SHORT).show();
+                        BluetoothChatFragment.isReceive = false;
+                    }
                 }
+                getHolder().unlockCanvasAndPost(canvas);
                 if (circleY <= displayPoint.y / 2 + range && circleY >= displayPoint.y / 2 - range) {
                     Log.i("ログ", "移動画像とタッチ位置がマッチしました");
                     if (isTouch) {
                         isStop = true;
                         Log.i("ログ", "移動画像とタッチ位置がマッチしました");
+//                        Toast.makeText(getActivity(),"クリア",Toast.LENGTH_SHORT).show();
+                        BluetoothChatFragment.isReceive = false;
                     }
                 }
             }
-
-
         }
     }
 

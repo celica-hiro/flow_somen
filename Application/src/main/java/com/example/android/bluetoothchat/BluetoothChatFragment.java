@@ -83,6 +83,7 @@ public class BluetoothChatFragment extends Fragment {
     private BluetoothChatService mChatService = null;
 
     public String spead = "0";
+    static public Boolean isReceive = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -313,6 +314,7 @@ public class BluetoothChatFragment extends Fragment {
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     spead = readMessage;
+                    isReceive = true;
                     Toast.makeText(getActivity(),readMessage,Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
